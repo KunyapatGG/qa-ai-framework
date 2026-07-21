@@ -1,0 +1,18 @@
+# CODEOWNERS — who must review changes to each path.
+# Format: <path pattern>  <owner(s)>   (GitHub/GitLab-compatible)
+# Replace the placeholder owners with real @users or @teams before enabling.
+
+# --- Framework-wide (needs maintainer review; every team depends on these) ---
+/shared/        @qa-framework-maintainers
+/agents/        @qa-framework-maintainers
+/README.md      @qa-framework-maintainers
+/CONTRIBUTING.md @qa-framework-maintainers
+/CODEOWNERS     @qa-framework-maintainers
+/docs/          @qa-framework-maintainers
+
+# --- Per-project (owned by the team that runs that project) ---
+/projects/_template/   @qa-framework-maintainers
+/projects/e-receive/   @team-e-receive
+/projects/inventory/   @team-inventory
+
+# When you add a project, add a line here mapping its folder to its owning team.
