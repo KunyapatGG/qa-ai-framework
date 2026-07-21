@@ -263,8 +263,8 @@
 
   <header>
     <div class="eyebrow">QA Requirement Agent · Squad Onboarding</div>
-    <h1>รีวิว requirement ให้ "ชัด ครบ เทสต์ได้" ก่อนเข้า dev</h1>
-    <p class="lede">Agent ทำหน้าที่เป็น Senior QA / Requirement Analyst — อ่าน User Story, PRD, Acceptance Criteria หรือ Jira/Confluence แล้วชี้ gap, ความเสี่ยง, ความกำกวม และตัดสิน "ความพร้อมสำหรับทดสอบ" <b>ก่อน</b>ทีมจะเขียนโค้ดบรรทัดแรก มันไม่เขียนโค้ด production — ผลิตการวิเคราะห์ คำถาม test condition และคำตัดสิน</p>
+    <h1>รีวิว requirement ให้ "ชัด ครบ เทสต์ได้" ก่อน QA Test</h1>
+    <p class="lede">Agent ทำหน้าที่เป็น Senior QA / Requirement Analyst — อ่าน User Story, PRD, Acceptance Criteria หรือ Jira/Confluence แล้วชี้ gap, ความเสี่ยง, ความกำกวม และตัดสิน "ความพร้อมสำหรับทดสอบ"</p>
   </header>
 
   <section>
@@ -290,9 +290,10 @@
   </section>
 
   <section>
-    <h2><span class="num">02</span> Operating Loop — 7 ขั้น</h2>
+    <h2><span class="num">02</span> Operating Loop — 8 ขั้น</h2>
     <p class="sub">ทุกงาน "รีวิวเต็ม" วิ่งตามลำดับนี้ จบด้วย verdict + รายการ blocker เรียงความสำคัญ</p>
     <div class="pipe">
+      <div class="step"><span class="n">0</span><span class="name">PROJECT</span><span class="desc">Resolve active project (§0.1) แล้วโหลด <code>projects/&lt;PROJECT&gt;/</code> knowledge + context — ถ้าระบุไม่ได้ ให้ถามก่อน ห้ามเดา</span></div>
       <div class="step"><span class="n">1</span><span class="name">INTAKE</span><span class="desc">อ่าน requirement + context ที่ลิงก์มา (Jira / Confluence / Git)</span></div>
       <div class="step"><span class="n">2</span><span class="name">CLASSIFY</span><span class="desc">จัดประเภท (feature / change / bugfix), โดเมน และ area ที่เสี่ยง</span></div>
       <div class="step analyze"><span class="n">3</span><span class="name">ANALYZE</span><span class="desc">รัน 5 skill วิเคราะห์ตามลำดับ ↓</span></div>
@@ -352,15 +353,20 @@
   </section>
 
   <section>
-    <h2><span class="num">05</span> สถาปัตยกรรม — agent ประกอบด้วยอะไร</h2>
-    <p class="sub">ทุกส่วนเป็นไฟล์ markdown ที่ orchestrate จาก <code>agent.md</code></p>
+    <h2><span class="num">05</span> สถาปัตยกรรม — เฟรมเวิร์ก 3 เลเยอร์</h2>
+    <p class="sub">แยกกันชัดเจน: <b>1 agent × 1 project = 1 งาน</b> — agent ให้ <i>วิธีทำ</i>, project ให้ <i>โจทย์</i>. เพิ่ม project ได้โดยไม่แตะ agent และเพิ่ม agent ได้โดยไม่แตะ project</p>
     <div class="arch">
-      <div class="layer"><div class="path">agent.md</div><div class="role">Brain</div><p>ตัวตน + operating loop + skill routing — จุดเริ่มที่ Claude อ่านก่อนเสมอ</p></div>
-      <div class="layer"><div class="path">config/</div><div class="role">Rules</div><p>quality-standard (เกณฑ์คะแนน), guardrails (กฎห้ามข้าม), output-schema (รูปผลลัพธ์)</p></div>
-      <div class="layer"><div class="path">skills/</div><div class="role">Procedures</div><p>6 ขั้นตอนการวิเคราะห์ที่ลูปเรียกใช้</p></div>
-      <div class="layer"><div class="path">knowledge/</div><div class="role">Domain</div><p>retail business rules, glossary, defect patterns, test techniques</p></div>
-      <div class="layer"><div class="path">templates/</div><div class="role">Output shapes</div><p>report, open-question, test-case</p></div>
-      <div class="layer"><div class="path">tools/</div><div class="role">Connectors</div><p>Jira, Confluence, Git, API — read-only เป็นค่าตั้งต้น</p></div>
+      <div class="layer"><div class="path">shared/</div><div class="role">Shared · maintainers</div><p>กฎเฟรมเวิร์กและงานฝีมือ QA ที่ใช้ร่วมทุกทีม: <code>config/</code> (guardrails, output-schema), <code>knowledge/</code> (guideline, techniques, defect-patterns, glossary + retail-business-rules ระดับบริษัท), <code>tools/</code> (Jira/Confluence/Git/API — read-only ตั้งต้น)</p></div>
+      <div class="layer"><div class="path">agents/</div><div class="role">Agents · maintainers</div><p>ความสามารถที่นำกลับมาใช้ได้ — <code>qa-requirement-agent</code> (✅ active) และ <code>qa-test-design-agent</code> (🚧 scaffold). แต่ละ agent ประกอบด้วย <code>agent.md</code> + <code>config/</code> + <code>skills/</code> + <code>templates/</code></p></div>
+      <div class="layer"><div class="path">projects/</div><div class="role">Projects · team-owned</div><p>ความรู้เชิงโดเมนแยกตามระบบ 1 โฟลเดอร์ต่อ 1 โปรเจกต์: <code>e-receive/</code>, <code>inventory/</code>, และ <code>_template/</code> (ก็อปเพื่อ onboard โปรเจกต์ใหม่). ในนั้นมี <code>knowledge/</code> + <code>context/</code> ของทีมเอง</p></div>
+    </div>
+    <div class="score-note" style="margin-top:14px">
+      <b>ข้างในตัว agent (qa-requirement-agent):</b>
+      <code>agent.md</code> = Brain (ตัวตน + loop + routing, Claude อ่านก่อนเสมอ) ·
+      <code>config/</code> = quality-standard (เกณฑ์คะแนน) ·
+      <code>skills/</code> = 6 procedure ที่ลูปเรียกใช้ ·
+      <code>templates/</code> = report / open-question.
+      &nbsp;<b>หมายเหตุ:</b> agent <b>ไม่มี</b>โฟลเดอร์ <code>knowledge/</code> ของตัวเอง — ความรู้ทั้งหมดมาจาก <code>shared/knowledge/</code> (สากล) + <code>projects/&lt;PROJECT&gt;/knowledge/</code> (เฉพาะโปรเจกต์)
     </div>
   </section>
 
@@ -378,13 +384,25 @@
   </section>
 
   <section>
-    <h2><span class="num">07</span> squad เริ่มใช้ยังไง</h2>
-    <p class="sub">Agent รันเป็น Claude.ai Project (ไม่ต้องเขียนโค้ด)</p>
+    <h2><span class="num">07</span> squad เริ่มใช้ยังไง — 2 โมเดล deploy</h2>
+    <p class="sub">Agent รันเป็น Claude.ai Project (ไม่ต้องเขียนโค้ด) — เลือกโมเดลตามว่า knowledge ของแต่ละทีมต้องแยกกันแค่ไหน</p>
+    <div class="q-row" style="margin-bottom:18px">
+      <div class="q-card">
+        <div class="k">Model A · แนะนำ</div>
+        <h3>1 Project ต่อ 1 ทีม</h3>
+        <p>แต่ละทีมสร้าง Claude.ai Project ของตัวเอง อัปเฉพาะ <code>shared/</code> + agent ที่ใช้ + <b>เฉพาะ</b> <code>projects/&lt;ของทีม&gt;/</code> — knowledge ไม่ข้ามทีม เหมาะเมื่อข้อมูลต้องแยกเด็ดขาด</p>
+      </div>
+      <div class="q-card">
+        <div class="k">Model B</div>
+        <h3>Project รวมก้อนเดียว</h3>
+        <p>อัปทั้ง <code>qa-ai-framework/</code> แล้วบอก agent ว่าจะทำโปรเจกต์ไหน (เช่น <i>"review PROJ-123 for e-receive"</i>) — agent จะ resolve active project เองตาม <code>agent.md §0.1</code></p>
+      </div>
+    </div>
     <ol class="adopt">
-      <li><b>สร้าง Claude.ai Project</b> แล้วอัปโหลดทุกไฟล์ในโฟลเดอร์ <code>qa-ai-framework/</code> เป็น knowledge</li>
-      <li><b>ตั้ง instruction ของ Project</b> ให้ชี้ไปที่ <code>agent.md §0</code> — "Follow agent.md as your operating instructions"</li>
-      <li><b>เติม knowledge ให้เป็นของ squad</b> — <code>glossary.md</code> และ <code>retail-business-rules.md</code> ยังเป็น <span class="pill">template</span> ต้องใส่คำศัพท์และกฎจริงของทีมก่อนใช้งานจริง</li>
-      <li><b>ป้อน requirement</b> — แปะ text หรือให้ Jira key/Confluence link แล้วสั่ง "review this requirement"</li>
+      <li><b>สร้าง Claude.ai Project</b> แล้วอัปโหลดไฟล์ตามโมเดลที่เลือก (A = shared + agent + project ของทีม / B = ทั้ง <code>qa-ai-framework/</code>)</li>
+      <li><b>ตั้ง instruction ของ Project</b> ให้ชี้ไปที่ <code>agent.md §0</code> — "Follow agent.md as your operating instructions" (โหลด agent.md ก่อนเสมอ)</li>
+      <li><b>เติม knowledge ให้เป็นของ squad</b> — <code>glossary.md</code> และ <code>business-rules.md</code> ใน <code>projects/&lt;ของทีม&gt;/</code> (และ retail-business-rules ระดับบริษัทใน <code>shared/</code>) ยังเป็น <span class="pill">template</span> ต้องใส่คำศัพท์และกฎจริงก่อนใช้งาน</li>
+      <li><b>ระบุโปรเจกต์ + ป้อน requirement</b> — บอก active project แล้วแปะ text หรือให้ Jira key/Confluence link แล้วสั่ง "review this requirement"</li>
       <li><b>รับผลไปใช้</b> — เอา report + verdict ไปคุยใน refinement, เอา open questions ไปเคลียร์กับ PO/BA แล้ว re-review</li>
     </ol>
   </section>
